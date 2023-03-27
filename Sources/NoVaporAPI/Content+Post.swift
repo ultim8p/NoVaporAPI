@@ -10,6 +10,10 @@ import Vapor
 
 public extension Content {
     
+}
+
+public extension Content {
+    
     func post(_ client: Client,
               uri: URI,
               query: Encodable? = nil,
