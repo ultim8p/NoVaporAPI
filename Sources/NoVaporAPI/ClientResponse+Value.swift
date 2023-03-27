@@ -10,10 +10,11 @@ import Vapor
 
 public extension ClientResponse {
     
-    func value<ValueType: Content>(using decoder: ContentDecoder?) throws -> ValueType {
+    func value<T: Content>(using decoder: ContentDecoder?) throws -> T {
         if let decoder = decoder {
-            return try content.decode(ValueType.self, using: decoder)
+            return try content.decode(T.self, using: decoder)
         }
-        return try content.decode(ValueType.self)
+        return try content.decode(T.self)
     }
+    
 }

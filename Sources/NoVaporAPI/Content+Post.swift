@@ -10,28 +10,42 @@ import Vapor
 
 public extension Content {
     
-}
-
-public extension Content {
+    static func get(_ client: Client,
+                    uri: URI,
+                    headers: HTTPHeaders)
+    async throws -> ClientResponse {
+        let response = try await client.get(uri, headers: headers)
+        return response
+    }
+    
+    func get(_ client: Client,
+              uri: URI,
+              headers: HTTPHeaders,
+              queryEncoder: URLQueryEncoder? = nil)
+    async throws -> ClientResponse {
+        let response = try await client.get(uri, headers: headers, beforeSend: { req in
+            try req.query.encode(self)
+        })
+        return response
+    }
     
     func post(_ client: Client,
               uri: URI,
               query: Encodable? = nil,
-              headers: [(String, String)],
+              headers: HTTPHeaders,
               queryEncoder: URLQueryEncoder? = nil,
-              contentEncoder: ContentEncoder? = nil
-          ) async throws -> ClientResponse {
-              let headers = HTTPHeaders(headers)
-              let response = try await client.post(uri, headers: headers, beforeSend: { req in
-                  try req.content.encode(self, using: contentEncoder ?? JSONEncoder())
-                  if let query = query, let encoder = queryEncoder {
-                      try req.query.encode(query, using: encoder)
-                  } else if let query = query {
-                      try req.query.encode(query)
-                  }
-              })
-              return response
-          }
+              contentEncoder: ContentEncoder? = nil)
+    async throws -> ClientResponse {
+        let response = try await client.post(uri, headers: headers, beforeSend: { req in
+            try req.content.encode(self, using: contentEncoder ?? JSONEncoder())
+            if let query = query, let encoder = queryEncoder {
+                try req.query.encode(query, using: encoder)
+            } else if let query = query {
+                try req.query.encode(query)
+            }
+        })
+        return response
+    }
     
     func post(
         _ client: Client,
@@ -40,10 +54,10 @@ public extension Content {
         port: Int? = nil,
         path: CustomStringConvertible? = nil,
         query: Encodable? = nil,
-        headers: [(String, String)],
+        headers: HTTPHeaders,
         queryEncoder: URLQueryEncoder? = nil,
-        contentEncoder: ContentEncoder? = nil
-    ) async throws -> ClientResponse {
+        contentEncoder: ContentEncoder? = nil)
+    async throws -> ClientResponse {
         let uri = URI(scheme: scheme, host: host, port: port, path: path?.description ?? "")
         return try await post(
             client,

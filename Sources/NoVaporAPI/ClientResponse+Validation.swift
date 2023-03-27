@@ -22,6 +22,4 @@ public extension ClientResponse {
         }
         return self
     }
-    
-   
 }
