@@ -47,6 +47,21 @@ public extension Content {
         return response
     }
     
+    func delete(_ client: Client,
+              uri: URI,
+              headers: HTTPHeaders,
+              queryEncoder: URLQueryEncoder? = nil)
+    async throws -> ClientResponse {
+        let response = try await client.delete(uri, headers: headers, beforeSend: { req in
+            if let encoder = queryEncoder {
+                try req.query.encode(self, using: encoder)
+            } else {
+                try req.query.encode(self)
+            }
+        })
+        return response
+    }
+    
     func post(
         _ client: Client,
         scheme: String,
