@@ -12,31 +12,40 @@ public extension Content {
     
     static func get(_ client: Client,
                     uri: URI,
-                    headers: HTTPHeaders)
+                    headers: HTTPHeaders,
+                    timeout: Int64 = 60)
     async throws -> ClientResponse {
-        let response = try await client.get(uri, headers: headers)
+        let response = try await client.get(uri, headers: headers, beforeSend: { req in
+            req.timeout = .seconds(timeout)
+        })
         return response
     }
     
-    func get(_ client: Client,
-              uri: URI,
-              headers: HTTPHeaders,
-              queryEncoder: URLQueryEncoder? = nil)
-    async throws -> ClientResponse {
+    func get(
+        _ client: Client,
+        uri: URI,
+        headers: HTTPHeaders,
+        queryEncoder: URLQueryEncoder? = nil,
+        timeout: Int64 = 60
+    ) async throws -> ClientResponse {
         let response = try await client.get(uri, headers: headers, beforeSend: { req in
+            req.timeout = .seconds(timeout)
             try req.query.encode(self)
         })
         return response
     }
     
-    func post(_ client: Client,
-              uri: URI,
-              query: Encodable? = nil,
-              headers: HTTPHeaders,
-              queryEncoder: URLQueryEncoder? = nil,
-              contentEncoder: ContentEncoder? = nil)
-    async throws -> ClientResponse {
+    func post(
+        _ client: Client,
+        uri: URI,
+        query: Encodable? = nil,
+        headers: HTTPHeaders,
+        queryEncoder: URLQueryEncoder? = nil,
+        contentEncoder: ContentEncoder? = nil,
+        timeout: Int64 = 60
+    ) async throws -> ClientResponse {
         let response = try await client.post(uri, headers: headers, beforeSend: { req in
+            req.timeout = .seconds(timeout)
             try req.content.encode(self, using: contentEncoder ?? JSONEncoder())
             if let query = query, let encoder = queryEncoder {
                 try req.query.encode(query, using: encoder)
@@ -47,12 +56,15 @@ public extension Content {
         return response
     }
     
-    func delete(_ client: Client,
-              uri: URI,
-              headers: HTTPHeaders,
-              queryEncoder: URLQueryEncoder? = nil)
-    async throws -> ClientResponse {
+    func delete(
+        _ client: Client,
+        uri: URI,
+        headers: HTTPHeaders,
+        queryEncoder: URLQueryEncoder? = nil,
+        timeout: Int64 = 60
+    ) async throws -> ClientResponse {
         let response = try await client.delete(uri, headers: headers, beforeSend: { req in
+            req.timeout = .seconds(timeout)
             if let encoder = queryEncoder {
                 try req.query.encode(self, using: encoder)
             } else {
@@ -71,8 +83,9 @@ public extension Content {
         query: Encodable? = nil,
         headers: HTTPHeaders,
         queryEncoder: URLQueryEncoder? = nil,
-        contentEncoder: ContentEncoder? = nil)
-    async throws -> ClientResponse {
+        contentEncoder: ContentEncoder? = nil,
+        timeout: Int64
+    ) async throws -> ClientResponse {
         let uri = URI(scheme: scheme, host: host, port: port, path: path?.description ?? "")
         return try await post(
             client,
@@ -80,7 +93,8 @@ public extension Content {
             query: query,
             headers: headers,
             queryEncoder: queryEncoder,
-            contentEncoder: contentEncoder
+            contentEncoder: contentEncoder,
+            timeout: timeout
         )
     }
 }
