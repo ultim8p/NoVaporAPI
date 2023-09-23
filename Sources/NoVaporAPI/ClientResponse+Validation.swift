@@ -10,7 +10,7 @@ import Vapor
 
 public extension ClientResponse {
     
-    func validate<ErrorType: NoVaporAPIError>(type: ErrorType.Type, using decoder: ContentDecoder? = nil) throws -> Self {
+    func validate<ErrorType: Error & Codable>(type: ErrorType.Type, using decoder: ContentDecoder? = nil) throws -> Self {
         let code = Int(status.code)
         let validCodes = 200...299
         guard validCodes.contains(code) else {

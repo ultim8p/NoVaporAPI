@@ -15,7 +15,7 @@ let package = Package(
             targets: ["NoVaporAPI"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/vapor/vapor.git", from: "4.0.0"),
+        .package(url: "https://github.com/vapor/vapor.git", from: "4.78.0"),
     ],
     targets: [
         .target(
