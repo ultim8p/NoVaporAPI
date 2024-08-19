@@ -37,6 +37,15 @@
       }
     },
     {
+      "identity" : "nologger",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ultim8p/NoLogger.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "5ec2439c9f637aea9559495745e5de29e0de485f"
+      }
+    },
+    {
       "identity" : "routing-kit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/routing-kit.git",

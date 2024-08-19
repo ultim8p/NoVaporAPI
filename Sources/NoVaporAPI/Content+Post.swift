@@ -7,17 +7,26 @@
 
 import Foundation
 import Vapor
+import NoLogger
 
 public extension Content {
     
-    static func get(_ client: Client,
-                    uri: URI,
-                    headers: HTTPHeaders,
-                    timeout: Int64 = 60)
+    static func get(
+        _ client: Client,
+        uri: URI,
+        headers: HTTPHeaders,
+        timeout: Int64 = 60,
+        logger: NoLogger? = nil
+    )
     async throws -> ClientResponse {
         let response = try await client.get(uri, headers: headers, beforeSend: { req in
             req.timeout = .seconds(timeout)
+            
+            let request = req
+            logger?.log(.debug, "NO API REQ: \(request)")
         })
+        
+        logger?.log(.debug, "NO API RESP: \(response)")
         return response
     }
     
@@ -26,12 +35,18 @@ public extension Content {
         uri: URI,
         headers: HTTPHeaders,
         queryEncoder: URLQueryEncoder? = nil,
-        timeout: Int64 = 60
+        timeout: Int64 = 60,
+        logger: NoLogger? = nil
     ) async throws -> ClientResponse {
         let response = try await client.get(uri, headers: headers, beforeSend: { req in
             req.timeout = .seconds(timeout)
             try req.query.encode(self)
+            
+            let request = req
+            logger?.log(.debug, "NO API REQ: \(request)")
         })
+        
+        logger?.log(.debug, "NO API RESP: \(response)")
         return response
     }
     
@@ -42,7 +57,8 @@ public extension Content {
         headers: HTTPHeaders,
         queryEncoder: URLQueryEncoder? = nil,
         contentEncoder: ContentEncoder? = nil,
-        timeout: Int64 = 60
+        timeout: Int64 = 60,
+        logger: NoLogger? = nil
     ) async throws -> ClientResponse {
         let response = try await client.post(uri, headers: headers, beforeSend: { req in
             req.timeout = .seconds(timeout)
@@ -52,7 +68,12 @@ public extension Content {
             } else if let query = query {
                 try req.query.encode(query)
             }
+            
+            let request = req
+            logger?.log(.debug, "NO API REQ: \(request)")
         })
+        
+        logger?.log(.debug, "NO API RESP: \(response)")
         return response
     }
     
@@ -61,7 +82,8 @@ public extension Content {
         uri: URI,
         headers: HTTPHeaders,
         queryEncoder: URLQueryEncoder? = nil,
-        timeout: Int64 = 60
+        timeout: Int64 = 60,
+        logger: NoLogger? = nil
     ) async throws -> ClientResponse {
         let response = try await client.delete(uri, headers: headers, beforeSend: { req in
             req.timeout = .seconds(timeout)
@@ -70,7 +92,12 @@ public extension Content {
             } else {
                 try req.query.encode(self)
             }
+            
+            let request = req
+            logger?.log(.debug, "NO API REQ: \(request)")
         })
+        
+        logger?.log(.debug, "NO API RESP: \(response)")
         return response
     }
     
@@ -84,17 +111,22 @@ public extension Content {
         headers: HTTPHeaders,
         queryEncoder: URLQueryEncoder? = nil,
         contentEncoder: ContentEncoder? = nil,
-        timeout: Int64
+        timeout: Int64,
+        logger: NoLogger? = nil
     ) async throws -> ClientResponse {
         let uri = URI(scheme: scheme, host: host, port: port, path: path?.description ?? "")
-        return try await post(
+        let response = try await post(
             client,
             uri: uri,
             query: query,
             headers: headers,
             queryEncoder: queryEncoder,
             contentEncoder: contentEncoder,
-            timeout: timeout
+            timeout: timeout,
+            logger: logger
         )
+        
+        logger?.log(.debug, "NO API RESP: \(response)")
+        return response
     }
 }
