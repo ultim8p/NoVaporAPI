@@ -21,9 +21,6 @@ public extension Content {
     async throws -> ClientResponse {
         let response = try await client.get(uri, headers: headers, beforeSend: { req in
             req.timeout = .seconds(timeout)
-            
-            let request = req
-            logger?.log(.debug, "NO API REQ: \(request)")
         })
         
         logger?.log(.debug, "NO API RESP: \(response)")
@@ -41,9 +38,6 @@ public extension Content {
         let response = try await client.get(uri, headers: headers, beforeSend: { req in
             req.timeout = .seconds(timeout)
             try req.query.encode(self)
-            
-            let request = req
-            logger?.log(.debug, "NO API REQ: \(request)")
         })
         
         logger?.log(.debug, "NO API RESP: \(response)")
@@ -68,9 +62,6 @@ public extension Content {
             } else if let query = query {
                 try req.query.encode(query)
             }
-            
-            let request = req
-            logger?.log(.debug, "NO API REQ: \(request)")
         })
         
         logger?.log(.debug, "NO API RESP: \(response)")
@@ -92,9 +83,6 @@ public extension Content {
             } else {
                 try req.query.encode(self)
             }
-            
-            let request = req
-            logger?.log(.debug, "NO API REQ: \(request)")
         })
         
         logger?.log(.debug, "NO API RESP: \(response)")
