@@ -1,4 +1,5 @@
 {
+  "originHash" : "58c0cdf21df4b7c2f6fe92c3cb9cbc1cf05d7050d62f5150933e1ad22ab1d9a9",
   "pins" : [
     {
       "identity" : "async-http-client",
@@ -41,8 +42,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ultim8p/NoLogger.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "5ec2439c9f637aea9559495745e5de29e0de485f"
+        "revision" : "7029bfe2e270356d661173ece2da7ebd0459f17c",
+        "version" : "0.0.1"
       }
     },
     {
@@ -199,5 +200,5 @@
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }
