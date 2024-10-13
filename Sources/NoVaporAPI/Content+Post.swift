@@ -38,6 +38,8 @@ public extension Content {
         let response = try await client.get(uri, headers: headers, beforeSend: { req in
             req.timeout = .seconds(timeout)
             try req.query.encode(self)
+            
+            if logger != nil { print("NO API REQ: \(req)") }
         })
         
         logger?.log(.debug, "NO API RESP: \(response)")
@@ -62,6 +64,8 @@ public extension Content {
             } else if let query = query {
                 try req.query.encode(query)
             }
+            
+            if logger != nil { print("NO API REQ: \(req)") }
         })
         
         logger?.log(.debug, "NO API RESP: \(response)")
@@ -83,6 +87,8 @@ public extension Content {
             } else {
                 try req.query.encode(self)
             }
+            
+            if logger != nil { print("NO API REQ: \(req)") }
         })
         
         logger?.log(.debug, "NO API RESP: \(response)")
